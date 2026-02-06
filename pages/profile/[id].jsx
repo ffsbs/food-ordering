@@ -1,12 +1,22 @@
+import { getSession,signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-
-import { useState } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import Account from "../../components/profile/Account";
 import Order from "../../components/profile/Order";
 import Password from "../../components/profile/Password";
 
 const Profile = () => {
   const [tabs, setTabs] = useState(0);
+  const { push } = useRouter();
+
+  const handleSignOut = () => {
+    if (confirm("Oturumu kapatmak istediğinizden emin misiniz??")) {
+      signOut({ redirect: false });
+      push("/auth/login");
+    }
+  };
 
   return (
     <div className="flex px-10 min-h-[calc(100vh_-_433px)] lg:flex-row flex-col lg:mb-0 mb-10">
@@ -50,10 +60,8 @@ const Profile = () => {
             <button className="ml-1">Orders</button>
           </li>
           <li
-            className={`border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all ${
-              tabs === 3 && "bg-primary text-white"
-            }`}
-            onClick={() => setTabs(3)}
+            className={`border w-full p-3 cursor-pointer hover:bg-primary hover:text-white transition-all`}
+            onClick={handleSignOut}
           >
             <i className="fa fa-sign-out"></i>
             <button className="ml-1">Exit</button>
@@ -66,5 +74,24 @@ const Profile = () => {
     </div>
   );
 };
+
+export async function getServerSideProps( {req, params}) {
+  const session = await getSession({ req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+
+  const user = await axios.get(`${process.env.NEXT_PUBLIC_URL}/users/${params.id}`);
+
+  return {
+    props: {},
+  };
+}
 
 export default Profile;

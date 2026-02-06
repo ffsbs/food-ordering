@@ -7,6 +7,7 @@ import Layout from "../layout/Layout";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 import { SessionProvider } from "next-auth/react"
+import { ToastContainer } from 'react-toastify';
 
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
@@ -14,6 +15,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     <SessionProvider session={session}>
       <Provider store={store}>
         <Layout>
+          <ToastContainer />
           <Component {...pageProps} />
         </Layout>
       </Provider>
@@ -27,7 +29,7 @@ export default MyApp;
 
 
 
-//  13.satırdaki Layout componenti tüm sayfaların etrafını sarmalamaktadır.
+//  16.satırdaki Layout componenti tüm sayfaların etrafını sarmalamaktadır.
 //  Header ve Footer componentleri Layout componenti içerisinde tanımlanmıştır.
 //  Böylece tüm sayfalarda Header ve Footer componentleri görünür olacaktır.
 //  14.satırda ise Component prop'u ile hangi sayfaya gidildiyse o sayfa render edilmektedir.

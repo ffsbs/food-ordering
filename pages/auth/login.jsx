@@ -3,16 +3,28 @@ import Link from "next/link";
 import Input from "../../components/form/Input";
 import Title from "../../components/ui/Title";
 import { loginSchema } from "../../schema/login";
-import { useSession, signIn } from "next-auth/react"
-
+import { useSession, signIn, getSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Login = () => {
   const { data: session } = useSession();
-  console.log(session);
+  const { push } = useRouter();
+
   const onSubmit = async (values, actions) => {
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    const { email, password } = values;
+    let options = { redirect: false, email, password };
+    const res = await signIn("credentials", options);
+    
+    if (res.ok) {
+      // Başarılı giriş - profile sayfasına yönlendir
+      push("/profile");
+    } else {
+      // Hata durumunda kullanıcıyı bilgilendir
+      console.error("Login error:", res.error);
+    }
     actions.resetForm();
   };
+
   const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
     useFormik({
       initialValues: {
@@ -62,8 +74,14 @@ const Login = () => {
           ))}
         </div>
         <div className="flex flex-col w-full gap-y-3 mt-6">
-          <button className="btn-primary" type="submit">LOGIN</button>
-          <button className="btn-primary !bg-secondary" type="button" onClick={() => signIn("github")}>
+          <button className="btn-primary" type="submit">
+            LOGIN
+          </button>
+          <button
+            className="btn-primary !bg-secondary"
+            type="button"
+            onClick={() => signIn("github")}
+          >
             <i className="fa fa-github mr-2 text-lg"></i>
             GITHUB
           </button>
@@ -77,5 +95,22 @@ const Login = () => {
     </div>
   );
 };
+
+export async function getServerSideProps( {req}) {
+  const session = await getSession({ req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/profile",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default Login;

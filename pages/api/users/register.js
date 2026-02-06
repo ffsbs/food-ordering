@@ -27,3 +27,8 @@ const handler = async (req, res) => {
 };
 
 export default handler;
+
+
+// Bu yaptığım işlemler sunucu tarafında gerçekleşiyor. Kullanıcı kayıt olurken şifresini hashleyip veritabanına öyle kaydediyoruz.
+//  Böylece güvenliği artırıyoruz.
+// fronted kısmı ise register.jsx dosyasında yapılacak.
