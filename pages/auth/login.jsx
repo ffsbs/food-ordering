@@ -3,27 +3,32 @@ import Link from "next/link";
 import Input from "../../components/form/Input";
 import Title from "../../components/ui/Title";
 import { loginSchema } from "../../schema/login";
-import { useSession, signIn, getSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Login = () => {
   const { data: session } = useSession();
   const { push } = useRouter();
+  const [error, setError] = useState("");
 
   const onSubmit = async (values, actions) => {
     const { email, password } = values;
+    setError("");
     let options = { redirect: false, email, password };
     const res = await signIn("credentials", options);
     
-    if (res.ok) {
-      // Başarılı giriş - profile sayfasına yönlendir
-      push("/profile");
-    } else {
-      // Hata durumunda kullanıcıyı bilgilendir
-      console.error("Login error:", res.error);
+    if (res?.error) {
+      setError(res.error);
     }
-    actions.resetForm();
+    // Session yüklendiğinde useEffect ile yönlendirilecek
   };
+
+  useEffect(() => {
+    if (session) {
+      push(`/profile/${session.user.id}`);
+    }
+  }, [session, push]);
 
   const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
     useFormik({
@@ -63,6 +68,11 @@ const Login = () => {
         onSubmit={handleSubmit}
       >
         <Title addClass="text-[40px] mb-6">Login</Title>
+        {error && (
+          <div className="w-full bg-red-500 text-white p-3 rounded-md mb-4 text-center">
+            {error}
+          </div>
+        )}
         <div className="flex flex-col gap-y-3 w-full">
           {inputs.map((input) => (
             <Input
@@ -95,22 +105,5 @@ const Login = () => {
     </div>
   );
 };
-
-export async function getServerSideProps( {req}) {
-  const session = await getSession({ req });
-
-  if (session) {
-    return {
-      redirect: {
-        destination: "/profile",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-}
 
 export default Login;

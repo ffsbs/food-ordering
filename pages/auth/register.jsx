@@ -17,13 +17,13 @@ const Register = () => {
       );
       if (res.status === 200) {
         toast.success("User created successfully");
+        actions.resetForm();
         push("/auth/login");
       }
     } catch (err) {
-      toast.error(err.response.data.message);
+      toast.error(err.response?.data?.message || "Registration failed");
       console.log(err);
     }
-    actions.resetForm();
   };
   const { values, errors, touched, handleSubmit, handleChange, handleBlur } =
     useFormik({

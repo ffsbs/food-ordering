@@ -19,7 +19,7 @@ const Login = () => {
       if (res.status === 200) {
         console.log(res.data);
         actions.resetForm();
-        toast.success("Admin Login Success!");
+        toast.success("Admin Girişi Başarılı!");
         push("/admin/profile");
       }
     } catch (err) {

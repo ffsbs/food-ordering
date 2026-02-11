@@ -23,6 +23,7 @@ const handler = async (req, res) => {
     // set password to hashed
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "Server error, please try again" });
   }
 };
 

@@ -6,7 +6,6 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import User from "../../../models/User";
 import dbConnect from "../../../util/dbConnect";
 import bcrypt from "bcryptjs";
-dbConnect();
 
 
 export default NextAuth({
@@ -23,6 +22,7 @@ export default NextAuth({
       password: { label: "Password", type: "password" }
     },
     async authorize(credentials, req) {
+      await dbConnect();
       const email = credentials?.email;
       const password = credentials?.password;
       if (!email || !password) {
@@ -46,21 +46,15 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user._id || user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      return session;
-    },
-    async redirect({ url, baseUrl }) {
-      // Eğer error varsa login'e gönder
-      if (url.includes("error")) {
-        return `${baseUrl}/auth/login`;
+      if (token.id) {
+        session.user.id = token.id;
       }
-      // Başarılı login sonrası profile yönlendir
-      return `${baseUrl}/profile`;
+      return session;
     },
   },
   session: {
