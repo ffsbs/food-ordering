@@ -3,7 +3,7 @@ import { serialize } from "cookie";
 const handler = (req, res) => {
   const { method } = req;
 
-  if (method === "POST") {                                // POST = Veri Göndermek / Oluşturmak ,,,,,,,,,  // Admin girişi için POST isteği     
+  if (method === "POST") {                                       // POST = Veri Göndermek / Oluşturmak ,,,,,,,,,  // Admin girişi için POST isteği     
     const { username, password } = req.body;
     if (
       username === process.env.ADMIN_USERNAME &&
@@ -12,8 +12,8 @@ const handler = (req, res) => {
       res.setHeader(
         "Set-Cookie",
         serialize("token", process.env.ADMIN_TOKEN, {
-          maxAge: 60 * 60,       // Çerezin 1 saat boyunca geçerli olmasını sağlar.
-          sameSite: "strict",    // Çerezin sadece senin siten üzerinden gönderilmesini sağlar.
+          maxAge: 60 * 60,                                              // Çerezin 1 saat boyunca geçerli olmasını sağlar.
+          sameSite: "strict",                                           // Çerezin sadece senin siten üzerinden gönderilmesini sağlar.
           path: "/",
         })
       );
@@ -23,7 +23,7 @@ const handler = (req, res) => {
     }
   }
 
-  if (method === "PUT") {                              // PUT = Veri Güncellemek VEYA Değiştirmek ,,,,,,,,,  // Admin çıkışı için PUT isteği,
+  if (method === "PUT") {                                   // PUT = Veri Güncellemek VEYA Değiştirmek ,,,,,,,,,  // Admin çıkışı için PUT isteği
     res.setHeader(
       "Set-Cookie",
       serialize("token", process.env.ADMIN_TOKEN, {

@@ -24,6 +24,7 @@ const Login = () => {
       }
     } catch (err) {
       console.log(err);
+      toast.error("Admin Girişi Başarısız!");
     }
   };
   const { values, errors, touched, handleSubmit, handleChange, handleBlur } =

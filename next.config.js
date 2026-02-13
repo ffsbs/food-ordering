@@ -5,6 +5,9 @@ const nextConfig = {
   experimental: {
     turbopackUseSystemTlsCerts: true,
   },
+  images: {
+    domains: ["res.cloudinary.com"],
+  },
 };
 
 export default nextConfig;
